@@ -27,7 +27,7 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./config/traefik.yml:/etc/traefik/traefik.yml
+      - ./config/traefik/conf.yml:/etc/traefik/traefik.yml
     networks:
       - traefik
     depends_on:
