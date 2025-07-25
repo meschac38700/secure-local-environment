@@ -18,10 +18,14 @@ services:
     container_name: traefik
     restart: unless-stopped
     image: traefik:v3.5
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dashboard.rule=Host(`traefik.eliam-lotonga.fr`)"
+      - "traefik.http.routers.dashboard.entrypoints=web"
+      - "traefik.http.routers.dashboard.service=api@internal"
     ports:
       - "80:80"
       - "443:443"
-      - "8080:8080"
     volumes:
       - ./config/traefik.yml:/etc/traefik/traefik.yml
     networks:
@@ -38,6 +42,7 @@ services:
       - ./config/.cloudflared:/home/nonroot/.cloudflared
     networks:
       - traefik
+
   nginx:
     container_name: nginx
     image: nginx:alpine
