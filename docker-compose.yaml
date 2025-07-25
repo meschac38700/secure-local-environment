@@ -23,11 +23,14 @@ services:
       - "traefik.http.routers.dashboard.rule=Host(`traefik.eliam-lotonga.fr`)"
       - "traefik.http.routers.dashboard.entrypoints=web"
       - "traefik.http.routers.dashboard.service=api@internal"
+      - "traefik.http.routers.dashboard.middlewares=auth"
+      - "traefik.http.middlewares.auth.basicauth.usersfile=/etc/traefik/.htpasswd"
     ports:
       - "80:80"
       - "443:443"
     volumes:
       - ./config/traefik/conf.yml:/etc/traefik/traefik.yml
+      - ./config/traefik/.htpasswd:/etc/traefik/.htpasswd
     networks:
       - traefik
     depends_on:

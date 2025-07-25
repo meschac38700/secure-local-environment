@@ -1,4 +1,6 @@
 config/.cloudflared/*
 !config/.cloudflared/config.yml
 !config/.cloudflared/README.md
+config/traefik/.htpasswd
 .idea
+.env
