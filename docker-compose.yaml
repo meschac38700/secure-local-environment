@@ -1,0 +1,54 @@
+# docker-compose.yml
+services:
+  socket-proxy:
+    image: tecnativa/docker-socket-proxy
+    container_name: socket-proxy
+    restart: unless-stopped
+    networks:
+      - traefik
+    environment:
+      - CONTAINERS=1
+      - SERVICES=1
+      - NETWORKS=1
+      - TASKS=1
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+  traefik:
+    container_name: traefik
+    restart: unless-stopped
+    image: traefik:v3.5
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - ./config/traefik.yml:/etc/traefik/traefik.yml
+    networks:
+      - traefik
+    depends_on:
+      - socket-proxy
+
+  cloudflared:
+    image: cloudflare/cloudflared
+    container_name: cloudflared
+    restart: unless-stopped
+    command: tunnel run
+    volumes:
+      - ./config/.cloudflared:/home/nonroot/.cloudflared
+    networks:
+      - traefik
+  nginx:
+    container_name: nginx
+    image: nginx:alpine
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.nginx.rule=Host(`lab.eliam-lotonga.fr`)
+      - traefik.http.routers.nginx.entrypoints=web
+      - traefik.http.services.nginx.loadbalancer.server.port=80
+    networks:
+      - traefik
+    restart: unless-stopped
+networks:
+  traefik:
+    external: true

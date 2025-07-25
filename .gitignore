@@ -1,0 +1,4 @@
+config/.cloudflared/*
+!config/.cloudflared/config.yml
+!config/.cloudflared/README.md
+.idea
