@@ -33,18 +33,6 @@ services:
     depends_on:
       - socket-proxy
 
-  nginx:
-    container_name: nginx
-    image: nginx:alpine
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.nginx.rule=Host(`lab.eliam-lotonga.fr`)
-      - traefik.http.routers.nginx.entrypoints=web
-      - traefik.http.services.nginx.loadbalancer.server.port=80
-    networks:
-      - traefik
-    restart: unless-stopped
-
 networks:
   traefik:
     external: true
