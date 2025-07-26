@@ -1,6 +1,6 @@
-config/.cloudflared/*
-!config/.cloudflared/config.yml
-!config/.cloudflared/README.md
-config/traefik/.htpasswd
+cloudflared/.cloudflared/*
+!cloudflared/.cloudflared/config.yml
+!cloudflared/.cloudflared/README.md
+secrets/
 .idea
 .env

@@ -1,50 +1,37 @@
 # docker-compose.yml
 services:
+  cloudflared:
+    extends:
+      service: cloudflared
+      file: cloudflared/docker-compose.yml
+
   socket-proxy:
-    image: tecnativa/docker-socket-proxy
-    container_name: socket-proxy
-    restart: unless-stopped
-    networks:
-      - traefik
-    environment:
-      - CONTAINERS=1
-      - SERVICES=1
-      - NETWORKS=1
-      - TASKS=1
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
+    extends:
+      service: socket-proxy
+      file: socket-proxy/docker-compose.yml
 
   traefik:
     container_name: traefik
-    restart: unless-stopped
+    restart: always
     image: traefik:v3.5
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.dashboard.rule=Host(`traefik.eliam-lotonga.fr`)"
+      - "traefik.http.routers.dashboard.rule=Host(`${TRAEFIK_DASHBOARD_DOMAIN}`)"
       - "traefik.http.routers.dashboard.entrypoints=web"
       - "traefik.http.routers.dashboard.service=api@internal"
-      - "traefik.http.routers.dashboard.middlewares=auth"
-      - "traefik.http.middlewares.auth.basicauth.usersfile=/etc/traefik/.htpasswd"
+      - "traefik.http.routers.dashboard.middlewares=auth@file"
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      - ./config/traefik/conf.yml:/etc/traefik/traefik.yml
-      - ./config/traefik/.htpasswd:/etc/traefik/.htpasswd
+      - "./secrets/acme.json:/secrets/acme.json"
+      - "./secrets/.htpasswd:/etc/traefik/.htpasswd:ro"
+      - "./traefik/dynamic:/etc/traefik/dynamic:ro"
+      - "./traefik/traefik.yml:/etc/traefik/traefik.yml:ro"
     networks:
       - traefik
     depends_on:
       - socket-proxy
-
-  cloudflared:
-    image: cloudflare/cloudflared
-    container_name: cloudflared
-    restart: unless-stopped
-    command: tunnel run
-    volumes:
-      - ./config/.cloudflared:/home/nonroot/.cloudflared
-    networks:
-      - traefik
 
   nginx:
     container_name: nginx
@@ -57,6 +44,7 @@ services:
     networks:
       - traefik
     restart: unless-stopped
+
 networks:
   traefik:
     external: true

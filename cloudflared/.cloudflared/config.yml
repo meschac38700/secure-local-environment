@@ -3,7 +3,7 @@ credentials-file: .cloudflared/tunnel-secrets.json
 
 ingress:
   - hostname: lab.eliam-lotonga.fr
-    service: http://traefik:80
+    service: http://traefik
   - hostname: traefik.eliam-lotonga.fr
-    service: http://traefik:80
+    service: http://traefik
   - service: http_status:404
