@@ -4,8 +4,7 @@
 ###### Generate credentials for the dashboard
 
 ```bash
-htpasswd -nbB $TRAEFIK_USER <password> > secrets/.htpasswd
-chmod 600 secrets/.htpasswd
+./generate_auth.sh
 ```
 
 ##### Create traefik network
