@@ -12,22 +12,27 @@ services:
 
   traefik:
     container_name: traefik
+    security_opt:
+      - no-new-privileges:true
     restart: always
     image: traefik:v3.5
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.dashboard.rule=Host(`${TRAEFIK_DASHBOARD_DOMAIN}`)"
       - "traefik.http.routers.dashboard.entrypoints=web"
+      # - "traefik.http.routers.dashboard.tls=true"
+      # - "traefik.http.routers.dashboard.tls.certresolver=cloudflare"
       - "traefik.http.routers.dashboard.service=api@internal"
       - "traefik.http.routers.dashboard.middlewares=auth@file"
+      - "traefik.docker.network=traefik"
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      - "./secrets/acme.json:/secrets/acme.json"
-      - "./secrets/.htpasswd:/etc/traefik/.htpasswd:ro"
-      - "./traefik/dynamic:/etc/traefik/dynamic:ro"
-      - "./traefik/traefik.yml:/etc/traefik/traefik.yml:ro"
+      - "./secrets:/secrets"
+      - "./traefik:/etc/traefik:ro"
+    environment:
+      - CF_DNS_API_TOKEN=${CF_DNS_API_TOKEN}
     networks:
       - traefik
     depends_on:

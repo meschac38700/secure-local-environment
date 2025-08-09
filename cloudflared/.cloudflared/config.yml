@@ -1,9 +1,11 @@
-tunnel: my-tunnel
-credentials-file: .cloudflared/tunnel-secrets.json
-
+tunnel: c6b67510-3da4-418b-8a2c-d642801831fd
 ingress:
   - hostname: lab.eliam-lotonga.fr
     service: http://traefik
   - hostname: traefik.eliam-lotonga.fr
     service: http://traefik
   - service: http_status:404
+
+originRequest:
+  http2: true
+  keepAliveTimeout: 30s

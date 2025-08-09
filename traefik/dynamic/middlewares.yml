@@ -2,4 +2,4 @@ http:
   middlewares:
     auth:
       basicAuth:
-        usersFile: "/etc/traefik/.htpasswd"
+        usersFile: "/secrets/.htpasswd"
